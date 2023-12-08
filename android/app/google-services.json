@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "200752266284",
+    "project_id": "emregvn-flutter-first",
+    "storage_bucket": "emregvn-flutter-first.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:200752266284:android:1c44fa64a8efbde0ad2589",
+        "android_client_info": {
+          "package_name": "com.firstproject.firstproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARH7WjoPySRq4oL3Lv91RKMJMU-nsVy8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
