@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -11,7 +12,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  
+
   @override
   void initState() {
     _email = TextEditingController();
@@ -33,55 +34,56 @@ class _LoginViewState extends State<LoginView> {
         title: const Text('Login'),
       ),
       body: Column(
-                  children: [
-                    TextField(
-                      controller: _email,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your email here"
-                      ),
-                    ),
-                    TextField(
-                      controller: _password,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your password here"
-                      ),
-                    ),
-                    TextButton(onPressed: () async {
-                      final email = _email.text;
-                      final password = _password.text;
-                      try {
-                        final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                          email: email,
-                          password: password,
-                        );
-                        print(userCredential);
-                        print('You have logged in succesfully as $email');
-                      } on FirebaseAuthException catch(e) {
-                        if(e.code == 'invalid-credential') {
-                          print("Invalid Credential");
-                        }
-                      }  
-                    }, child: const Text("Login"),),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Don't have an account?"),
-                        TextButton(onPressed: () {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/register/',
-                            (route) => false
-                          );
-                        }, child: Text("Sign Up")),
-                      ],
-                    )
-                  ],
-                ),
+        children: [
+          TextField(
+            controller: _email,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration:
+                const InputDecoration(hintText: "Enter your email here"),
+          ),
+          TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration:
+                const InputDecoration(hintText: "Enter your password here"),
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+                Navigator.of(context).pushNamedAndRemoveUntil('/notes/', (route) => false);
+                devtools.log('You have logged in succesfully as $email');
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'invalid-credential') {
+                  devtools.log("Invalid Credential");
+                }
+              }
+            },
+            child: const Text("Login"),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Don't have an account?"),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/register/', (route) => false);
+                  },
+                  child: const Text("Sign Up")),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
