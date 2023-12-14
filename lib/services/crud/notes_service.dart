@@ -13,11 +13,18 @@ class NotesService {
 
   //this makes NotesService instance singleton.
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      }
+    );
+  }
   factory NotesService() => _shared;
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
     
@@ -172,7 +179,7 @@ class NotesService {
     final updateCount = await db.update(noteTable, {
       textColumn: text,
       isSyncedWithCloudColumn: 0,
-    });
+    }, where: 'id = ?', whereArgs: [note.id]);
 
     if (updateCount == 0) {
       throw CouldNotFindNote();
