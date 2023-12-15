@@ -78,7 +78,6 @@ class _NewNoteViewState extends State<NewNoteView> {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +97,7 @@ class _NewNoteViewState extends State<NewNoteView> {
                 maxLines: null,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: const InputDecoration(hintText: 'Enter Note'),
+                decoration: const InputDecoration(hintText: "Enter Note"),
               );
             default:
               return const CircularProgressIndicator();
