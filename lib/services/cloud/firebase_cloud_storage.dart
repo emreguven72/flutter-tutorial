@@ -6,6 +6,11 @@ import 'package:firstproject/services/cloud/cloud_storage_exceptions.dart';
 class FirebaseCloudStorage {
   final notes = FirebaseFirestore.instance.collection('notes');
 
+  FirebaseCloudStorage._sharedInstance();
+  static final FirebaseCloudStorage _shared =
+      FirebaseCloudStorage._sharedInstance();
+  factory FirebaseCloudStorage() => _shared;
+
   Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) =>
       notes.snapshots().map((event) => event.docs
           .map((doc) => CloudNote.fromSnapshot(doc))
@@ -19,23 +24,25 @@ class FirebaseCloudStorage {
             isEqualTo: ownerUserId,
           )
           .get()
-          .then((value) => value.docs.map((doc) {
-                return CloudNote(
-                  documentId: doc.id,
-                  ownerUserId: doc.data()[ownerUserIdFieldName] as String,
-                  text: doc.data()[textFieldName] as String,
-                );
-              }));
+          .then(
+              (value) => value.docs.map((doc) => CloudNote.fromSnapshot(doc)));
     } catch (e) {
       throw CouldNotCreateNoteException();
     }
   }
 
-  void createNewNote({required String ownerUserId}) async {
-    await notes.add({
+  Future<CloudNote> createNewNote({required String ownerUserId}) async {
+    final document = await notes.add({
       ownerUserIdFieldName: ownerUserId,
       textFieldName: '',
     });
+
+    final fetchedNote = await document.get();
+    return CloudNote(
+      documentId: fetchedNote.id,
+      text: '',
+      ownerUserId: ownerUserId,
+    );
   }
 
   Future<void> updateNote({
@@ -56,9 +63,4 @@ class FirebaseCloudStorage {
       throw CouldNotDeleteNoteException();
     }
   }
-
-  FirebaseCloudStorage._sharedInstance();
-  static final FirebaseCloudStorage _shared =
-      FirebaseCloudStorage._sharedInstance();
-  factory FirebaseCloudStorage() => _shared;
 }
