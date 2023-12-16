@@ -11,7 +11,7 @@ class CreateUpdateNoteView extends StatefulWidget {
 }
 
 class _CreateAndUpdateNoteView extends State<CreateUpdateNoteView> {
-  DatabaseNote? _note;
+  LocalDatabaseNote? _note;
   late final NotesService _notesService;
   late final TextEditingController _textController;
 
@@ -47,8 +47,8 @@ class _CreateAndUpdateNoteView extends State<CreateUpdateNoteView> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<DatabaseNote> _createOrGetExistingNote(BuildContext context) async {
-    final widgetNote = context.getArgument<DatabaseNote>();
+  Future<LocalDatabaseNote> _createOrGetExistingNote(BuildContext context) async {
+    final widgetNote = context.getArgument<LocalDatabaseNote>();
     
     if (widgetNote != null) {
       _note = widgetNote;
@@ -62,7 +62,7 @@ class _CreateAndUpdateNoteView extends State<CreateUpdateNoteView> {
     }
 
     final currentUser = AuthService.firebase().currentUser!;
-    final email = currentUser.email!;
+    final email = currentUser.email;
     final dbUser = await _notesService.getUser(email: email);
     final newNote = await _notesService.createNote(owner: dbUser);
     _note = newNote;

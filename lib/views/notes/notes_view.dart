@@ -16,7 +16,7 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late final NotesService _notesService;
 
-  String get userEmail => AuthService.firebase().currentUser!.email!;
+  String get userEmail => AuthService.firebase().currentUser!.email;
 
   @override
   void initState() {
@@ -73,7 +73,7 @@ class _NotesViewState extends State<NotesView> {
                       case ConnectionState.waiting:
                       case ConnectionState.active:
                         if (snapshot.hasData) {
-                          final allNotes = snapshot.data as List<DatabaseNote>;
+                          final allNotes = snapshot.data as List<LocalDatabaseNote>;
                           return NotesListView(
                             notes: allNotes,
                             onDeleteNote: (note) async {
