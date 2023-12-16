@@ -1,8 +1,10 @@
 import 'package:firstproject/services/auth/auth_service.dart';
 import 'package:firstproject/services/cloud/cloud_note.dart';
 import 'package:firstproject/services/cloud/firebase_cloud_storage.dart';
+import 'package:firstproject/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:firstproject/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({super.key});
@@ -47,7 +49,7 @@ class _CreateAndUpdateNoteView extends State<CreateUpdateNoteView> {
 
   Future<CloudNote> _createOrGetExistingNote(BuildContext context) async {
     final widgetNote = context.getArgument<CloudNote>();
-    
+
     if (widgetNote != null) {
       _note = widgetNote;
       _textController.text = widgetNote.text;
@@ -81,11 +83,31 @@ class _CreateAndUpdateNoteView extends State<CreateUpdateNoteView> {
       await _notesService.updateNote(documentId: note.documentId, text: text);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Note'),
+        title: const Text('Note'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final text = _textController.text;
+              if (_note == null || text.isEmpty) {
+                await showCannotShareEmptyNoteDialog(context: context);
+              } else {
+                Share.share(text);
+              }
+            },
+            icon: const Icon(Icons.share),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: const Icon(Icons.done),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: _createOrGetExistingNote(context),
